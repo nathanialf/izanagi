@@ -6,7 +6,6 @@ export function TextureDebugger() {
   const [message, setMessage] = useState("🔧 DEBUGGER LOADING...");
 
   useEffect(() => {
-    console.log("TextureDebugger component mounted");
     setMessage("🔧 DEBUGGER ACTIVE");
     
     const texturePaths = [
@@ -23,10 +22,10 @@ export function TextureDebugger() {
           const response = await fetch(path);
           const status = response.ok ? "✓ OK" : "✗ FAILED";
           results.push(`${path.split('/').pop()}: ${status} (${response.status})`);
-          console.log(`Texture ${path}: ${response.ok ? 'OK' : 'FAILED'} (${response.status})`);
+          if (!response.ok) console.warn(`Texture ${path}: FAILED (${response.status})`);
         } catch (error) {
           results.push(`${path.split('/').pop()}: ✗ ERROR`);
-          console.log(`Texture ${path}: ERROR - ${error}`);
+          console.error(`Texture ${path}: ERROR - ${error}`);
         }
       }
       

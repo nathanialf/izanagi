@@ -37,13 +37,8 @@ function FBXModel({ modelPath, showMaterial = true }: { modelPath: string; showM
   
   useEffect(() => {
     if (fbx) {
-      console.log("FBX Model loaded successfully:", fbx);
-      console.log("=== TEXTURE DEBUG REPORT ===");
-      console.log("DDS textures loaded:", Object.keys(textures).length > 0 ? Object.keys(textures) : "NONE - DDS loading failed");
-      console.log("Simple textures loaded:", Object.keys(simpleTextures).length > 0 ? Object.keys(simpleTextures) : "NONE");
-      
       if (Object.keys(textures).length === 0) {
-        console.log("⚠️ WARNING: No DDS textures loaded! Check browser network tab for 404s or loading errors");
+        console.warn("No DDS textures loaded - using fallback textures");
       }
       
       // Scale and position the model (only do this once)

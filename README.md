@@ -1,44 +1,57 @@
-# Izanagi's Burden - 3D Model Viewer
+# Project Izanagi - 3D Model Viewer with Retro Effects
 
-A modern 3D model viewer built with Next.js and React Three Fiber, featuring Destiny 2's exotic sniper rifle "Izanagi's Burden" with interactive controls and visual effects.
+A modern 3D model viewer built with Next.js and React Three Fiber, featuring Destiny 2's exotic sniper rifle "Izanagi's Burden" with interactive controls, visual effects, and comprehensive testing infrastructure.
 
 ## Features
 
+### Core Functionality
 - **3D Model Rendering**: FBX model loading with Three.js
 - **Advanced Texturing**: DDS texture support with smart material mapping
 - **Interactive Controls**: 
   - Orbit camera controls (pan, zoom, rotate)
   - Material/Spectral mode toggle
   - Settings persistence via localStorage
-- **Modern UI**: Glass-morphism control panel with Tabler icons
 - **Responsive Design**: Works on desktop and mobile devices
+
+### Quality Assurance
+- **Comprehensive Testing**: Unit, integration, and performance tests with Jest
+- **Cross-Browser Testing**: Automated E2E testing with Playwright across Chrome, Firefox, Safari, and mobile
+- **Test-Driven Build**: All tests must pass before successful build
+- **Error Handling**: Robust error boundaries and WebGL fallbacks
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with TypeScript
+- **Framework**: Next.js 15.5.3 with TypeScript
 - **3D Graphics**: React Three Fiber (@react-three/fiber)
 - **3D Utilities**: @react-three/drei for controls and helpers
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS v4+
 - **Icons**: Tabler Icons React
 - **3D Engine**: Three.js with FBX and DDS loaders
+- **Testing**: Jest, React Testing Library, Playwright
 
 ## Project Structure
 
 ```
 src/
-├── app/                    # Next.js app directory
+├── app/                      # Next.js app directory
 ├── components/
-│   ├── Scene3D.tsx        # Main 3D scene component
-│   ├── ModelLoader.tsx    # FBX model loading logic
-│   ├── TextureLoader.tsx  # DDS texture loading and application
+│   ├── Scene3D.tsx          # Main 3D scene component
+│   ├── ModelLoader.tsx      # FBX model loading logic
+│   ├── TextureLoader.tsx    # DDS texture loading and application
 │   ├── SimpleTextureLoader.tsx # Fallback texture system
-│   ├── ControlPanel.tsx   # UI controls
-│   ├── ErrorBoundary.tsx  # Error handling
-│   └── DDSTest.tsx        # Texture debugging utility
+│   ├── ControlPanel.tsx     # UI controls with persistence
+│   ├── ErrorBoundary.tsx    # Error handling
+│   └── DDSTest.tsx          # Texture debugging utility
+├── __tests__/               # Test suites
+│   ├── components/          # Component unit tests
+│   ├── integration/         # Integration tests
+│   └── perf/                # Performance tests
+e2e/
+├── cross-browser.spec.ts    # Cross-browser E2E tests
 public/
 ├── models/
-│   ├── izanagis-burden.fbx # 3D weapon model
-│   └── textures/           # DDS texture files
+│   ├── izanagis-burden.fbx  # 3D weapon model
+│   └── textures/            # DDS texture files
 └── favicon.ico
 ```
 
@@ -64,10 +77,20 @@ public/
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+### Testing
+
+Run the full test suite:
+```bash
+npm run test:all    # All tests (unit + E2E)
+npm run test        # Jest unit tests only  
+npm run test:e2e    # Playwright E2E tests only
+npm run test:coverage # Test coverage report
+```
+
 ### Build for Production
 
 ```bash
-npm run build
+npm run build       # Runs all tests + builds
 npm start
 ```
 

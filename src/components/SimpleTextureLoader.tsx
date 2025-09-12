@@ -30,15 +30,12 @@ export function useSimpleTextures(): SimpleTextureMap {
   const [textures, setTextures] = useState<SimpleTextureMap>({});
   
   useEffect(() => {
-    console.log("Creating simple test textures...");
-    
     const testTextures: SimpleTextureMap = {
       'IzanagisBurdenReciever_Diffuse': createColoredTexture('#8B4513'), // Brown
       'IzanagisBurdenScope_Diffuse': createColoredTexture('#2F4F4F'), // Dark slate gray
       'IzanagisBurdenAmmo_Diffuse': createColoredTexture('#FF6347'), // Tomato red
     };
     
-    console.log("Simple textures created:", Object.keys(testTextures));
     setTextures(testTextures);
   }, []);
   
@@ -46,12 +43,9 @@ export function useSimpleTextures(): SimpleTextureMap {
 }
 
 export function applySimpleTexturesToMaterial(material: THREE.Material, textures: SimpleTextureMap, ghostMode: boolean = false) {
-  console.log(`[MATERIAL DEBUG] Applying to material, ghostMode: ${ghostMode}, material type: ${material.type}`);
-  
   if (material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshPhysicalMaterial || material instanceof THREE.MeshPhongMaterial) {
     
     if (ghostMode) {
-      console.log("[MATERIAL DEBUG] Applying GHOST MODE");
       // Ghost mode: make translucent with emission
       material.transparent = true;
       material.opacity = 0.3;
@@ -63,7 +57,6 @@ export function applySimpleTexturesToMaterial(material: THREE.Material, textures
       return;
     }
     
-    console.log("[MATERIAL DEBUG] Applying MATERIAL MODE");
     // Reset ghost mode properties
     material.transparent = false;
     material.opacity = 1.0;
@@ -76,17 +69,12 @@ export function applySimpleTexturesToMaterial(material: THREE.Material, textures
     
     // Apply simple colored textures
     if (Object.keys(textures).length > 0) {
-      console.log("[MATERIAL DEBUG] Applying textures:", Object.keys(textures));
-      
       // Use the first available texture as diffuse
       const firstTexture = Object.values(textures)[0];
       if (firstTexture) {
         material.map = firstTexture;
         material.color = new THREE.Color(0xffffff); // White to show texture properly
-        console.log("[MATERIAL DEBUG] Applied texture to material");
       }
-    } else {
-      console.log("[MATERIAL DEBUG] No textures, using bright red color");
     }
     
     // Set material properties for visibility (only for PBR materials)
@@ -99,9 +87,7 @@ export function applySimpleTexturesToMaterial(material: THREE.Material, textures
       material.specular = new THREE.Color(0x222222); // Low specular
     }
     material.needsUpdate = true;
-    
-    console.log(`[MATERIAL DEBUG] Final material state: color=${material.color.getHexString()}, transparent=${material.transparent}, opacity=${material.opacity}`);
   } else {
-    console.log(`[MATERIAL DEBUG] Unsupported material type: ${material.type}`);
+    console.warn(`Unsupported material type: ${material.type}`);
   }
 }

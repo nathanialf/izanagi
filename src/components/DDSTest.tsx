@@ -12,11 +12,6 @@ export function DDSTest() {
         const response = await fetch("/models/textures/IzanagisBurdenReciever_Diffuse.dds");
         if (response.ok) {
           const blob = await response.blob();
-          console.log("DDS file fetch successful:", {
-            size: blob.size,
-            type: blob.type,
-            url: "/models/textures/IzanagisBurdenReciever_Diffuse.dds"
-          });
           setTestResult(`DDS fetch OK: ${blob.size} bytes`);
           
           // Try to load with Three.js DDSLoader
@@ -26,7 +21,6 @@ export function DDSTest() {
           loader.load(
             "/models/textures/IzanagisBurdenReciever_Diffuse.dds",
             (texture) => {
-              console.log("DDS texture loaded successfully with Three.js:", texture);
               setTestResult(`✅ DDS loads in Three.js: ${texture.image?.width}x${texture.image?.height}`);
             },
             undefined,

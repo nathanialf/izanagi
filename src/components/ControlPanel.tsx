@@ -14,13 +14,11 @@ export default function ControlPanel({ onShowMaterialChange }: ControlPanelProps
   // Load settings from localStorage
   useEffect(() => {
     const savedShowMaterial = localStorage.getItem('izanagi-show-material') !== 'false'; // Default to true
-    console.log(`[CONTROL DEBUG] Loading from localStorage: ${localStorage.getItem('izanagi-show-material')}, parsed as: ${savedShowMaterial}`);
     setShowMaterial(savedShowMaterial);
     onShowMaterialChange(savedShowMaterial);
   }, [onShowMaterialChange]);
 
   const handleShowMaterialToggle = (enabled: boolean) => {
-    console.log(`[CONTROL DEBUG] Toggling show material to: ${enabled}`);
     setShowMaterial(enabled);
     localStorage.setItem('izanagi-show-material', enabled.toString());
     onShowMaterialChange(enabled);

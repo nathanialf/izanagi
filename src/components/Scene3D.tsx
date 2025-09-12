@@ -44,11 +44,8 @@ export default function Scene3D() {
   const [showMaterial, setShowMaterial] = useState(true);
 
   const handleShowMaterialChange = (newShowMaterial: boolean) => {
-    console.log(`[SCENE DEBUG] Show material changed from ${showMaterial} to ${newShowMaterial}`);
     setShowMaterial(newShowMaterial);
   };
-
-  console.log(`[SCENE DEBUG] Current show material state: ${showMaterial}`);
 
   return (
     <div className="w-full h-full">

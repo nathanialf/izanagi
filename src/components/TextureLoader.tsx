@@ -35,14 +35,11 @@ export function useDDSTextures(texturePaths: string[]): TextureMap {
           
           const fileName = path.split('/').pop()?.replace(/\.(dds|jpg|png|jpeg)$/, '') || path;
           loadedTextures[fileName] = texture;
-          console.log(`Successfully loaded texture: ${fileName}`);
           
         } catch (error) {
           console.warn(`Failed to load texture: ${path}`, error);
         }
       }
-      
-      console.log(`Loaded ${Object.keys(loadedTextures).length} textures:`, Object.keys(loadedTextures));
       setTextures(loadedTextures);
     };
     
@@ -55,7 +52,6 @@ export function useDDSTextures(texturePaths: string[]): TextureMap {
 // Smart texture mapping based on material/mesh names
 function findBestTextureForMaterial(materialName: string, meshName: string, textures: TextureMap): THREE.Texture | null {
   const searchName = (materialName + ' ' + meshName).toLowerCase();
-  console.log(`[TEXTURE DEBUG] Finding texture for material: "${materialName}", mesh: "${meshName}"`);
   
   // Priority order for texture matching
   const searchPatterns = [
@@ -75,7 +71,6 @@ function findBestTextureForMaterial(materialName: string, meshName: string, text
     if (pattern === '' || searchName.includes(pattern)) {
       const texture = textures[textureKey];
       if (texture) {
-        console.log(`[TEXTURE DEBUG] Matched "${pattern}" -> ${textureKey}`);
         return texture;
       }
     }
@@ -84,7 +79,6 @@ function findBestTextureForMaterial(materialName: string, meshName: string, text
   // Last resort: use any available diffuse texture
   const diffuseTextures = Object.entries(textures).filter(([key]) => key.toLowerCase().includes('diffuse'));
   if (diffuseTextures.length > 0) {
-    console.log(`[TEXTURE DEBUG] Using fallback diffuse texture: ${diffuseTextures[0][0]}`);
     return diffuseTextures[0][1];
   }
   
@@ -94,7 +88,7 @@ function findBestTextureForMaterial(materialName: string, meshName: string, text
 export function applyTexturesToMaterial(material: THREE.Material, textures: TextureMap, ghostMode: boolean = false, materialName: string = '', meshName: string = '') {
   
   if (!(material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshPhysicalMaterial || material instanceof THREE.MeshPhongMaterial)) {
-    console.log(`❌ Unsupported material type: ${material.type}`);
+    console.warn(`Unsupported material type: ${material.type}`);
     return;
   }
 
@@ -105,7 +99,6 @@ export function applyTexturesToMaterial(material: THREE.Material, textures: Text
     material.emissive = new THREE.Color(0x004466);
     material.emissiveIntensity = 0.5;
     material.needsUpdate = true;
-    console.log(`👻 Applied ghost mode to ${materialName}`);
     return;
   }
 
@@ -114,7 +107,7 @@ export function applyTexturesToMaterial(material: THREE.Material, textures: Text
   material.opacity = 1.0;
   material.emissive = new THREE.Color(0x000000);
   material.emissiveIntensity = 0;
-  material.side = THREE.DoubleSide; // Render both sides of faces
+  material.side = THREE.BackSide; // Render back sides of faces
   material.depthTest = true;
   material.depthWrite = true;
     
@@ -141,5 +134,4 @@ export function applyTexturesToMaterial(material: THREE.Material, textures: Text
   }
   
   material.needsUpdate = true;
-  console.log(`✅ Applied solid mode to ${materialName} - transparent: ${material.transparent}, opacity: ${material.opacity}`);
 }
