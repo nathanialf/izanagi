@@ -78,8 +78,8 @@ describe('ControlPanel', () => {
     const settingsButton = screen.getByRole('button', { name: /open controls/i })
     await user.click(settingsButton)
     
-    // Find and toggle checkbox
-    const checkbox = screen.getByRole('checkbox')
+    // Find and toggle show material checkbox specifically
+    const checkbox = screen.getByLabelText('Show Material')
     expect(checkbox).toBeChecked()
     
     await user.click(checkbox)
@@ -98,7 +98,7 @@ describe('ControlPanel', () => {
     const settingsButton = screen.getByRole('button', { name: /open controls/i })
     await user.click(settingsButton)
     
-    const checkbox = screen.getByRole('checkbox')
+    const checkbox = screen.getByLabelText('Show Material')
     expect(checkbox).not.toBeChecked()
   })
 })

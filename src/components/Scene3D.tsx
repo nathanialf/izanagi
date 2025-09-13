@@ -7,6 +7,7 @@ import ModelLoader from "./ModelLoader";
 import { ErrorBoundary, ErrorFallback } from "./ErrorBoundary";
 import ControlPanel from "./ControlPanel";
 import { DDSTest } from "./DDSTest";
+import PixelatedEffect from "./PixelatedEffect";
 
 function Lights() {
   return (
@@ -42,17 +43,25 @@ function Lights() {
 
 export default function Scene3D() {
   const [showMaterial, setShowMaterial] = useState(true);
+  const [pixelatedMode, setPixelatedMode] = useState(false);
 
   const handleShowMaterialChange = (newShowMaterial: boolean) => {
     setShowMaterial(newShowMaterial);
   };
 
+  const handlePixelatedModeChange = (newPixelatedMode: boolean) => {
+    setPixelatedMode(newPixelatedMode);
+  };
+
   return (
     <div className="w-full h-full">
-      <ControlPanel onShowMaterialChange={handleShowMaterialChange} />
+      <ControlPanel 
+        onShowMaterialChange={handleShowMaterialChange}
+        onPixelatedModeChange={handlePixelatedModeChange}
+      />
       <Canvas
         camera={{
-          position: [0, 2, 5],
+          position: [0, 2, 3],
           fov: 50,
           near: 0.1,
           far: 1000,
@@ -73,13 +82,13 @@ export default function Scene3D() {
             <ModelLoader modelPath="/models/izanagis-burden.fbx" showMaterial={showMaterial} />
           </Suspense>
         </ErrorBoundary>
+
+        <PixelatedEffect enabled={pixelatedMode} pixelSize={4} />
         
         <OrbitControls
           enablePan={true}
-          enableZoom={true}
+          enableZoom={false}
           enableRotate={true}
-          minDistance={2}
-          maxDistance={20}
           target={[0, 0, 0]}
         />
       </Canvas>

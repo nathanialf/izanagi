@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: ['dev.internal.defnf.com'],
   turbopack: {
     rules: {
       '*.dds': {

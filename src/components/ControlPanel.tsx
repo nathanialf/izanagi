@@ -5,23 +5,39 @@ import { IconSettings, IconX} from "@tabler/icons-react";
 
 interface ControlPanelProps {
   onShowMaterialChange: (enabled: boolean) => void;
+  onPixelatedModeChange?: (enabled: boolean) => void;
 }
 
-export default function ControlPanel({ onShowMaterialChange }: ControlPanelProps) {
+export default function ControlPanel({ 
+  onShowMaterialChange,
+  onPixelatedModeChange
+}: ControlPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showMaterial, setShowMaterial] = useState(true); // Default to true (material mode)
+  const [pixelatedMode, setPixelatedMode] = useState(false); // Default to false
 
   // Load settings from localStorage
   useEffect(() => {
     const savedShowMaterial = localStorage.getItem('izanagi-show-material') !== 'false'; // Default to true
+    const savedPixelatedMode = localStorage.getItem('izanagi-pixelated-mode') === 'true'; // Default to false
+    
     setShowMaterial(savedShowMaterial);
+    setPixelatedMode(savedPixelatedMode);
+    
     onShowMaterialChange(savedShowMaterial);
-  }, [onShowMaterialChange]);
+    onPixelatedModeChange?.(savedPixelatedMode);
+  }, [onShowMaterialChange, onPixelatedModeChange]);
 
   const handleShowMaterialToggle = (enabled: boolean) => {
     setShowMaterial(enabled);
     localStorage.setItem('izanagi-show-material', enabled.toString());
     onShowMaterialChange(enabled);
+  };
+
+  const handlePixelatedModeToggle = (enabled: boolean) => {
+    setPixelatedMode(enabled);
+    localStorage.setItem('izanagi-pixelated-mode', enabled.toString());
+    onPixelatedModeChange?.(enabled);
   };
 
   return (
@@ -59,7 +75,7 @@ export default function ControlPanel({ onShowMaterialChange }: ControlPanelProps
           <div className="space-y-6">
             {/* Show Material Toggle */}
             <div className="space-y-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-white">
                   Show Material
                 </span>
@@ -68,6 +84,23 @@ export default function ControlPanel({ onShowMaterialChange }: ControlPanelProps
                   checked={showMaterial}
                   onChange={(e) => handleShowMaterialToggle(e.target.checked)}
                   className="w-4 h-4 accent-blue-500"
+                  aria-label="Show Material"
+                />
+              </div>
+            </div>
+
+            {/* Pixelated Mode Toggle */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-white">
+                  Pixelated Mode
+                </span>
+                <input
+                  type="checkbox"
+                  checked={pixelatedMode}
+                  onChange={(e) => handlePixelatedModeToggle(e.target.checked)}
+                  className="w-4 h-4 accent-red-500"
+                  aria-label="Pixelated Mode"
                 />
               </div>
             </div>

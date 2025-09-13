@@ -8,8 +8,9 @@ A modern 3D model viewer built with Next.js and React Three Fiber, featuring Des
 - **3D Model Rendering**: FBX model loading with Three.js
 - **Advanced Texturing**: DDS texture support with smart material mapping
 - **Interactive Controls**: 
-  - Orbit camera controls (pan, zoom, rotate)
+  - Orbit camera controls (pan, rotate; zoom disabled)
   - Material/Spectral mode toggle
+  - Pixelated mode for retro sprite-like rendering
   - Settings persistence via localStorage
 - **Responsive Design**: Works on desktop and mobile devices
 
@@ -40,6 +41,7 @@ src/
 │   ├── TextureLoader.tsx    # DDS texture loading and application
 │   ├── SimpleTextureLoader.tsx # Fallback texture system
 │   ├── ControlPanel.tsx     # UI controls with persistence
+│   ├── PixelatedEffect.tsx  # Retro pixelated rendering effect
 │   ├── ErrorBoundary.tsx    # Error handling
 │   └── DDSTest.tsx          # Texture debugging utility
 ├── __tests__/               # Test suites
@@ -96,8 +98,9 @@ npm start
 
 ## Usage
 
-- **Camera Controls**: Click and drag to rotate, scroll to zoom, right-click and drag to pan
+- **Camera Controls**: Click and drag to rotate, right-click and drag to pan (zoom disabled)
 - **Material Toggle**: Use the checkbox in the control panel to switch between Material and Spectral modes
+- **Pixelated Mode**: Enable retro sprite-like rendering with low-resolution, pixelated visuals
 - **Settings**: Your preferences are automatically saved to localStorage
 
 ## Texture System
@@ -117,10 +120,11 @@ The application supports both DDS textures (primary) and fallback canvas texture
 - `TextureLoader`: Manages DDS texture loading with intelligent mapping
 - `ControlPanel`: Modern UI controls with persistence
 
-### Material Modes
+### Rendering Modes
 
 - **Material Mode** (`showMaterial: true`): Full textures and realistic materials
 - **Spectral Mode** (`showMaterial: false`): Translucent ghost-like appearance
+- **Pixelated Mode**: Retro sprite-like rendering with low-resolution, pixelated visuals
 
 ## Browser Compatibility
 
