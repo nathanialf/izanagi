@@ -10,7 +10,8 @@ A modern 3D model viewer built with Next.js and React Three Fiber, featuring Des
 - **Interactive Controls**: 
   - Orbit camera controls (pan, rotate; zoom disabled)
   - Material/Spectral mode toggle
-  - Pixelated mode for retro sprite-like rendering
+  - Pixelated mode for retro sprite-like rendering with bloom and haziness effects
+  - Game Boy mode with 4-shade green color palette
   - Settings persistence via localStorage
 - **Responsive Design**: Works on desktop and mobile devices
 
@@ -41,7 +42,7 @@ src/
 │   ├── TextureLoader.tsx    # DDS texture loading and application
 │   ├── SimpleTextureLoader.tsx # Fallback texture system
 │   ├── ControlPanel.tsx     # UI controls with persistence
-│   ├── PixelatedEffect.tsx  # Retro pixelated rendering effect
+│   ├── PixelatedEffect.tsx  # Retro pixelated rendering effect with bloom and haziness
 │   ├── ErrorBoundary.tsx    # Error handling
 │   └── DDSTest.tsx          # Texture debugging utility
 ├── __tests__/               # Test suites
@@ -100,7 +101,8 @@ npm start
 
 - **Camera Controls**: Click and drag to rotate, right-click and drag to pan (zoom disabled)
 - **Material Toggle**: Use the checkbox in the control panel to switch between Material and Spectral modes
-- **Pixelated Mode**: Enable retro sprite-like rendering with low-resolution, pixelated visuals
+- **Pixelated Mode**: Enable retro sprite-like rendering with low-resolution, pixelated visuals, bloom effects, and CRT-like haziness
+- **Game Boy Mode**: Transform the weapon into classic 4-shade Game Boy green palette (darkest to lightest green distributed across weapon parts)
 - **Settings**: Your preferences are automatically saved to localStorage
 
 ## Texture System
@@ -124,7 +126,12 @@ The application supports both DDS textures (primary) and fallback canvas texture
 
 - **Material Mode** (`showMaterial: true`): Full textures and realistic materials
 - **Spectral Mode** (`showMaterial: false`): Translucent ghost-like appearance
-- **Pixelated Mode**: Retro sprite-like rendering with low-resolution, pixelated visuals
+- **Pixelated Mode**: Retro sprite-like rendering with low-resolution, pixelated visuals, bloom effects, and CRT-like haziness
+- **Game Boy Mode**: Classic 4-shade green monochrome palette applied to weapon parts:
+  - Darkest green (0x0f380f): Meshes 0-5 (main body, stock)
+  - Dark green (0x306230): Meshes 6-10 (barrel components)
+  - Light green (0x8bac0f): Meshes 11-15 (scope, details)
+  - Lightest green (0x9bbc0f): Meshes 16-20 (small parts, accents)
 
 ## Browser Compatibility
 

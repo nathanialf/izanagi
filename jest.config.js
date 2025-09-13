@@ -26,6 +26,10 @@ const customJestConfig = {
     // Handle module aliases
     '^@/components/(.*)$': '<rootDir>/src/components/$1',
     '^@/app/(.*)$': '<rootDir>/src/app/$1',
+    
+    // Mock Three.js loaders that cause issues in Jest
+    '^three/examples/jsm/loaders/DDSLoader.js$': '<rootDir>/__mocks__/DDSLoader.js',
+    '^three/examples/jsm/loaders/FBXLoader.js$': '<rootDir>/__mocks__/FBXLoader.js',
   },
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   transformIgnorePatterns: [

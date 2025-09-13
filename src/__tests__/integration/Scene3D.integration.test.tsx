@@ -19,6 +19,8 @@ describe('Control Panel Integration', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    // Clear localStorage to ensure clean state between tests
+    localStorage.clear()
   })
 
   it('integrates with parent component state management', async () => {
@@ -185,5 +187,80 @@ describe('Control Panel Integration', () => {
     expect(materialCheckbox).not.toBeChecked()
     expect(pixelatedCheckbox).toBeChecked() // Should remain unchanged
     expect(mockOnShowMaterialChange).toHaveBeenCalledWith(false)
+  })
+
+  it('handles Game Boy mode integration with control panel', async () => {
+    const mockOnGameBoyModeChange = jest.fn()
+    const user = userEvent.setup()
+    
+    render(
+      <ControlPanel 
+        onShowMaterialChange={mockOnShowMaterialChange}
+        onPixelatedModeChange={mockOnPixelatedModeChange}
+        onGameBoyModeChange={mockOnGameBoyModeChange}
+      />
+    )
+    
+    // Open control panel
+    const settingsButton = screen.getByRole('button', { name: /open controls/i })
+    await user.click(settingsButton)
+    
+    // Should show Game Boy mode toggle
+    expect(screen.getByText('Game Boy Mode')).toBeInTheDocument()
+    
+    const gameBoyCheckbox = screen.getByLabelText('Game Boy Mode')
+    expect(gameBoyCheckbox).toBeInTheDocument()
+    expect(gameBoyCheckbox).not.toBeChecked()
+    
+    // Enable Game Boy mode
+    await user.click(gameBoyCheckbox)
+    expect(gameBoyCheckbox).toBeChecked()
+    expect(mockOnGameBoyModeChange).toHaveBeenCalledWith(true)
+    
+    // Disable Game Boy mode
+    await user.click(gameBoyCheckbox)
+    expect(gameBoyCheckbox).not.toBeChecked()
+    expect(mockOnGameBoyModeChange).toHaveBeenCalledWith(false)
+  })
+
+  it('handles all three modes independently', async () => {
+    const mockOnGameBoyModeChange = jest.fn()
+    const user = userEvent.setup()
+    
+    render(
+      <ControlPanel 
+        onShowMaterialChange={mockOnShowMaterialChange}
+        onPixelatedModeChange={mockOnPixelatedModeChange}
+        onGameBoyModeChange={mockOnGameBoyModeChange}
+      />
+    )
+    
+    // Open control panel
+    const settingsButton = screen.getByRole('button', { name: /open controls/i })
+    await user.click(settingsButton)
+    
+    const materialCheckbox = screen.getByLabelText('Show Material')
+    const pixelatedCheckbox = screen.getByLabelText('Pixelated Mode')
+    const gameBoyCheckbox = screen.getByLabelText('Game Boy Mode')
+    
+    // Enable all modes
+    await user.click(pixelatedCheckbox)
+    await user.click(gameBoyCheckbox)
+    
+    // All modes should be enabled independently
+    expect(materialCheckbox).toBeChecked() // Default on
+    expect(pixelatedCheckbox).toBeChecked()
+    expect(gameBoyCheckbox).toBeChecked()
+    
+    // Disable material mode, others should remain
+    await user.click(materialCheckbox)
+    expect(materialCheckbox).not.toBeChecked()
+    expect(pixelatedCheckbox).toBeChecked()
+    expect(gameBoyCheckbox).toBeChecked()
+    
+    // Verify all callbacks were called
+    expect(mockOnShowMaterialChange).toHaveBeenCalledWith(false)
+    expect(mockOnPixelatedModeChange).toHaveBeenCalledWith(true)
+    expect(mockOnGameBoyModeChange).toHaveBeenCalledWith(true)
   })
 })

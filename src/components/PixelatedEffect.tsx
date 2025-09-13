@@ -59,8 +59,51 @@ export default function PixelatedEffect({
         void main() {
           // Simple nearest neighbor sampling with brightness boost
           vec4 color = texture2D(tDiffuse, vUv);
-          // Make the pixelated model brighter
-          color.rgb *= 1.5;
+          
+          // Make the pixelated model much brighter
+          color.rgb *= 2.5;
+          
+          // Add noticeable bloom effect
+          vec2 texelSize = vec2(2.0) / vec2(512.0, 512.0); // Larger sample radius
+          vec3 bloom = vec3(0.0);
+          float bloomStrength = 0.8; // Much stronger bloom
+          
+          // Sample nearby pixels for bloom with larger radius
+          vec4 bloom1 = texture2D(tDiffuse, vUv + vec2(texelSize.x, 0.0));
+          vec4 bloom2 = texture2D(tDiffuse, vUv + vec2(-texelSize.x, 0.0));
+          vec4 bloom3 = texture2D(tDiffuse, vUv + vec2(0.0, texelSize.y));
+          vec4 bloom4 = texture2D(tDiffuse, vUv + vec2(0.0, -texelSize.y));
+          vec4 bloom5 = texture2D(tDiffuse, vUv + vec2(texelSize.x, texelSize.y));
+          vec4 bloom6 = texture2D(tDiffuse, vUv + vec2(-texelSize.x, -texelSize.y));
+          vec4 bloom7 = texture2D(tDiffuse, vUv + vec2(texelSize.x, -texelSize.y));
+          vec4 bloom8 = texture2D(tDiffuse, vUv + vec2(-texelSize.x, texelSize.y));
+          
+          // Calculate bloom from any visible pixels (lower threshold)
+          float luminance = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+          if(luminance > 0.1) {
+            bloom = (bloom1.rgb + bloom2.rgb + bloom3.rgb + bloom4.rgb + 
+                    bloom5.rgb + bloom6.rgb + bloom7.rgb + bloom8.rgb) * 0.125 * bloomStrength;
+            color.rgb += bloom;
+          }
+          
+          // Add subtle haziness/softness 
+          vec2 blurOffset = vec2(0.5) / vec2(512.0, 512.0);
+          
+          // Sample slightly offset pixels for soft blur
+          vec4 blur1 = texture2D(tDiffuse, vUv + blurOffset);
+          vec4 blur2 = texture2D(tDiffuse, vUv - blurOffset);
+          vec4 blur3 = texture2D(tDiffuse, vUv + vec2(blurOffset.x, -blurOffset.y));
+          vec4 blur4 = texture2D(tDiffuse, vUv + vec2(-blurOffset.x, blurOffset.y));
+          
+          // Create soft blur average
+          vec3 blurred = (blur1.rgb + blur2.rgb + blur3.rgb + blur4.rgb) * 0.25;
+          
+          // Mix original with blurred for haziness
+          color.rgb = mix(color.rgb, blurred, 0.2);
+          
+          // Add very subtle overall glow
+          color.rgb += vec3(0.01) * luminance;
+          
           gl_FragColor = color;
         }
       `,

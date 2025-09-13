@@ -100,7 +100,7 @@ describe('PixelatedEffect', () => {
     );
   });
 
-  it('should create shader material with brightness boost', () => {
+  it('should create shader material with brightness boost and bloom', () => {
     const THREE = require('three');
     
     render(<PixelatedEffect enabled={true} />);
@@ -110,9 +110,40 @@ describe('PixelatedEffect', () => {
         uniforms: expect.objectContaining({
           tDiffuse: { value: {} }
         }),
-        fragmentShader: expect.stringContaining('color.rgb *= 1.5')
+        fragmentShader: expect.stringContaining('color.rgb *= 2.5'),
+        vertexShader: expect.stringContaining('varying vec2 vUv')
       })
     );
+  });
+
+  it('should include bloom effect in fragment shader', () => {
+    const THREE = require('three');
+    
+    render(<PixelatedEffect enabled={true} />);
+
+    const shaderCall = THREE.ShaderMaterial.mock.calls[0][0];
+    const fragmentShader = shaderCall.fragmentShader;
+
+    // Verify shader includes bloom effect logic
+    expect(fragmentShader).toContain('bloom'); // Bloom variable
+    expect(fragmentShader).toContain('bloomStrength'); // Bloom strength
+    expect(fragmentShader).toContain('luminance > 0.1'); // Updated luminance threshold
+    expect(fragmentShader).toContain('color.rgb += bloom'); // Bloom application
+  });
+
+  it('should include haziness effect in fragment shader', () => {
+    const THREE = require('three');
+    
+    render(<PixelatedEffect enabled={true} />);
+
+    const shaderCall = THREE.ShaderMaterial.mock.calls[0][0];
+    const fragmentShader = shaderCall.fragmentShader;
+
+    // Verify shader includes haziness/softness effect
+    expect(fragmentShader).toContain('blurOffset'); // Blur offset variable
+    expect(fragmentShader).toContain('blurred'); // Blurred color variable
+    expect(fragmentShader).toContain('mix(color.rgb, blurred'); // Blur mixing
+    expect(fragmentShader).toContain('vec4 blur1'); // Blur sampling
   });
 
   it('should apply pixelated CSS styles when enabled', () => {

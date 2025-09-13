@@ -85,11 +85,11 @@ function findBestTextureForMaterial(materialName: string, meshName: string, text
   return null;
 }
 
-export function applyTexturesToMaterial(material: THREE.Material, textures: TextureMap, ghostMode: boolean = false, materialName: string = '', meshName: string = '') {
+export function applyTexturesToMaterial(material: THREE.Material, textures: TextureMap, ghostMode: boolean = false, materialName: string = '', meshName: string = '', gameBoyMode: boolean = false): THREE.Material {
   
   if (!(material instanceof THREE.MeshStandardMaterial || material instanceof THREE.MeshPhysicalMaterial || material instanceof THREE.MeshPhongMaterial)) {
     console.warn(`Unsupported material type: ${material.type}`);
-    return;
+    return material;
   }
 
   if (ghostMode) {
@@ -99,7 +99,65 @@ export function applyTexturesToMaterial(material: THREE.Material, textures: Text
     material.emissive = new THREE.Color(0x004466);
     material.emissiveIntensity = 0.5;
     material.needsUpdate = true;
-    return;
+    return material;
+  }
+
+  if (gameBoyMode) {
+    // Create a unique material clone for this mesh to avoid shared material issues
+    const uniqueMaterial = material.clone();
+    
+    // Game Boy mode: apply green palette colors to the unique material
+    uniqueMaterial.transparent = false;
+    uniqueMaterial.opacity = 1.0;
+    uniqueMaterial.emissive = new THREE.Color(0x000000);
+    uniqueMaterial.emissiveIntensity = 0;
+    uniqueMaterial.side = THREE.BackSide;
+    uniqueMaterial.depthTest = true;
+    uniqueMaterial.depthWrite = true;
+    
+    // Map different parts to Game Boy green shades (4-color palette)
+    const searchName = (materialName + ' ' + meshName).toLowerCase();
+    
+    
+    let gameBoyColor: THREE.Color;
+    
+    // Extract mesh number from mesh name (e.g., "Mesh_0008rip" -> 8)
+    const meshMatch = meshName.match(/mesh_(\d+)/i);
+    const meshNumber = meshMatch ? parseInt(meshMatch[1], 10) : 0;
+    
+    
+    // Distribute the 21 meshes across 4 Game Boy colors
+    // Meshes 0-5: Darkest green
+    if (meshNumber >= 0 && meshNumber <= 5) {
+      gameBoyColor = new THREE.Color(0x0f380f); // Darkest green
+    }
+    // Meshes 6-10: Dark green  
+    else if (meshNumber >= 6 && meshNumber <= 10) {
+      gameBoyColor = new THREE.Color(0x306230); // Dark green
+    }
+    // Meshes 11-15: Light green
+    else if (meshNumber >= 11 && meshNumber <= 15) {
+      gameBoyColor = new THREE.Color(0x8bac0f); // Light green
+    }
+    // Meshes 16-20: Lightest green
+    else {
+      gameBoyColor = new THREE.Color(0x9bbc0f); // Lightest green
+    }
+    
+    uniqueMaterial.color = gameBoyColor;
+    uniqueMaterial.map = null; // Remove textures to show solid colors
+    
+    // Set material properties for Game Boy look
+    if (uniqueMaterial instanceof THREE.MeshStandardMaterial || uniqueMaterial instanceof THREE.MeshPhysicalMaterial) {
+      uniqueMaterial.metalness = 0.0;
+      uniqueMaterial.roughness = 0.8;
+    } else if (uniqueMaterial instanceof THREE.MeshPhongMaterial) {
+      uniqueMaterial.shininess = 10;
+      uniqueMaterial.specular = new THREE.Color(0x111111);
+    }
+    
+    uniqueMaterial.needsUpdate = true;
+    return uniqueMaterial;
   }
 
   // SOLID MODE - Force non-transparent and proper rendering
@@ -134,4 +192,5 @@ export function applyTexturesToMaterial(material: THREE.Material, textures: Text
   }
   
   material.needsUpdate = true;
+  return material;
 }

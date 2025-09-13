@@ -44,6 +44,7 @@ function Lights() {
 export default function Scene3D() {
   const [showMaterial, setShowMaterial] = useState(true);
   const [pixelatedMode, setPixelatedMode] = useState(false);
+  const [gameBoyMode, setGameBoyMode] = useState(false);
 
   const handleShowMaterialChange = (newShowMaterial: boolean) => {
     setShowMaterial(newShowMaterial);
@@ -53,11 +54,16 @@ export default function Scene3D() {
     setPixelatedMode(newPixelatedMode);
   };
 
+  const handleGameBoyModeChange = (newGameBoyMode: boolean) => {
+    setGameBoyMode(newGameBoyMode);
+  };
+
   return (
     <div className="w-full h-full">
       <ControlPanel 
         onShowMaterialChange={handleShowMaterialChange}
         onPixelatedModeChange={handlePixelatedModeChange}
+        onGameBoyModeChange={handleGameBoyModeChange}
       />
       <Canvas
         camera={{
@@ -79,7 +85,7 @@ export default function Scene3D() {
         
         <ErrorBoundary fallback={ErrorFallback}>
           <Suspense fallback={null}>
-            <ModelLoader modelPath="/models/izanagis-burden.fbx" showMaterial={showMaterial} />
+            <ModelLoader modelPath="/models/izanagis-burden.fbx" showMaterial={showMaterial} gameBoyMode={gameBoyMode} />
           </Suspense>
         </ErrorBoundary>
 

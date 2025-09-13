@@ -6,27 +6,33 @@ import { IconSettings, IconX} from "@tabler/icons-react";
 interface ControlPanelProps {
   onShowMaterialChange: (enabled: boolean) => void;
   onPixelatedModeChange?: (enabled: boolean) => void;
+  onGameBoyModeChange?: (enabled: boolean) => void;
 }
 
 export default function ControlPanel({ 
   onShowMaterialChange,
-  onPixelatedModeChange
+  onPixelatedModeChange,
+  onGameBoyModeChange
 }: ControlPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showMaterial, setShowMaterial] = useState(true); // Default to true (material mode)
   const [pixelatedMode, setPixelatedMode] = useState(false); // Default to false
+  const [gameBoyMode, setGameBoyMode] = useState(false); // Default to false
 
   // Load settings from localStorage
   useEffect(() => {
     const savedShowMaterial = localStorage.getItem('izanagi-show-material') !== 'false'; // Default to true
     const savedPixelatedMode = localStorage.getItem('izanagi-pixelated-mode') === 'true'; // Default to false
+    const savedGameBoyMode = localStorage.getItem('izanagi-gameboy-mode') === 'true'; // Default to false
     
     setShowMaterial(savedShowMaterial);
     setPixelatedMode(savedPixelatedMode);
+    setGameBoyMode(savedGameBoyMode);
     
     onShowMaterialChange(savedShowMaterial);
     onPixelatedModeChange?.(savedPixelatedMode);
-  }, [onShowMaterialChange, onPixelatedModeChange]);
+    onGameBoyModeChange?.(savedGameBoyMode);
+  }, [onShowMaterialChange, onPixelatedModeChange, onGameBoyModeChange]);
 
   const handleShowMaterialToggle = (enabled: boolean) => {
     setShowMaterial(enabled);
@@ -38,6 +44,12 @@ export default function ControlPanel({
     setPixelatedMode(enabled);
     localStorage.setItem('izanagi-pixelated-mode', enabled.toString());
     onPixelatedModeChange?.(enabled);
+  };
+
+  const handleGameBoyModeToggle = (enabled: boolean) => {
+    setGameBoyMode(enabled);
+    localStorage.setItem('izanagi-gameboy-mode', enabled.toString());
+    onGameBoyModeChange?.(enabled);
   };
 
   return (
@@ -101,6 +113,22 @@ export default function ControlPanel({
                   onChange={(e) => handlePixelatedModeToggle(e.target.checked)}
                   className="w-4 h-4 accent-red-500"
                   aria-label="Pixelated Mode"
+                />
+              </div>
+            </div>
+
+            {/* Game Boy Mode Toggle */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-white">
+                  Game Boy Mode
+                </span>
+                <input
+                  type="checkbox"
+                  checked={gameBoyMode}
+                  onChange={(e) => handleGameBoyModeToggle(e.target.checked)}
+                  className="w-4 h-4 accent-green-500"
+                  aria-label="Game Boy Mode"
                 />
               </div>
             </div>

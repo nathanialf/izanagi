@@ -11,9 +11,10 @@ import { useSimpleTextures, applySimpleTexturesToMaterial } from "./SimpleTextur
 interface ModelLoaderProps {
   modelPath?: string;
   showMaterial?: boolean;
+  gameBoyMode?: boolean;
 }
 
-function FBXModel({ modelPath, showMaterial = true }: { modelPath: string; showMaterial?: boolean }) {
+function FBXModel({ modelPath, showMaterial = true, gameBoyMode = false }: { modelPath: string; showMaterial?: boolean; gameBoyMode?: boolean }) {
   const fbx = useLoader(FBXLoader, modelPath);
   
   // Load actual DDS textures
@@ -47,7 +48,7 @@ function FBXModel({ modelPath, showMaterial = true }: { modelPath: string; showM
         fbx.position.set(0, 0, 0);
       }
       
-      // Apply materials every time textures or showMaterial changes
+      // Apply materials every time textures, showMaterial, or gameBoyMode changes
       const ghostMode = !showMaterial; // Convert showMaterial to ghostMode for legacy functions
       
       fbx.traverse((child) => {
@@ -69,7 +70,7 @@ function FBXModel({ modelPath, showMaterial = true }: { modelPath: string; showM
                 
                 // Use DDS textures if available, fallback to simple textures
                 if (Object.keys(textures).length > 0) {
-                  applyTexturesToMaterial(mat, textures, ghostMode, materialName, meshName);
+                  child.material[index] = applyTexturesToMaterial(mat, textures, ghostMode, materialName, meshName, gameBoyMode);
                 } else {
                   applySimpleTexturesToMaterial(mat, simpleTextures, ghostMode);
                 }
@@ -80,7 +81,7 @@ function FBXModel({ modelPath, showMaterial = true }: { modelPath: string; showM
               
               // Use DDS textures if available, fallback to simple textures
               if (Object.keys(textures).length > 0) {
-                applyTexturesToMaterial(child.material, textures, ghostMode, materialName, meshName);
+                child.material = applyTexturesToMaterial(child.material, textures, ghostMode, materialName, meshName, gameBoyMode);
               } else {
                 applySimpleTexturesToMaterial(child.material, simpleTextures, ghostMode);
               }
@@ -89,7 +90,7 @@ function FBXModel({ modelPath, showMaterial = true }: { modelPath: string; showM
         }
       });
     }
-  }, [fbx, textures, simpleTextures, showMaterial]);
+  }, [fbx, textures, simpleTextures, showMaterial, gameBoyMode]);
 
   return <primitive object={fbx} />;
 }
@@ -115,7 +116,7 @@ function PlaceholderWeapon() {
   );
 }
 
-export default function ModelLoader({ modelPath, showMaterial = true }: ModelLoaderProps) {
+export default function ModelLoader({ modelPath, showMaterial = true, gameBoyMode = false }: ModelLoaderProps) {
   const [modelExists, setModelExists] = useState(false);
 
   useEffect(() => {
@@ -132,7 +133,7 @@ export default function ModelLoader({ modelPath, showMaterial = true }: ModelLoa
   }, [modelPath]);
 
   if (modelPath && modelExists) {
-    return <FBXModel modelPath={modelPath} showMaterial={showMaterial} />;
+    return <FBXModel modelPath={modelPath} showMaterial={showMaterial} gameBoyMode={gameBoyMode} />;
   }
 
   return <PlaceholderWeapon />;
