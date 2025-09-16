@@ -64,7 +64,7 @@ public/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 20+ (required for AWS Amplify support)
 - npm or yarn
 
 ### Installation
