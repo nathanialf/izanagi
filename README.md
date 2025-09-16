@@ -2,6 +2,8 @@
 
 A modern 3D model viewer built with Next.js and React Three Fiber, featuring Destiny 2's exotic sniper rifle "Izanagi's Burden" with interactive controls, visual effects, and comprehensive testing infrastructure.
 
+Deployed to https://izanagi.riperoni.com
+
 ## Features
 
 ### Core Functionality
